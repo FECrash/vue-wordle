@@ -1,4 +1,13 @@
 <script setup lang="ts">
+const problem = [
+  ['W', 'O', 'R', 'L', 'D'],
+  ['A', 'P', 'P', 'L', 'E'],
+  ['F', 'I', 'G', 'H', 'T'],
+  ['U', 'P', 'S', 'E', 'T'],
+  ['P', 'R', 'E', 'S', 'S'],
+  ['P', 'I', 'L', 'L', 'S'],
+];
+
 const keybord = [
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
   ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -47,7 +56,19 @@ const keybord = [
       </div>
     </header>
     <main class="w-100 m-auto h-[calc(100%-50px)] flex flex-col">
-      <section class="items-center"></section>
+      <section class="flex flex-col justify-center items-center flex-grow">
+        <div class="w-[350px] h-[420px] grid grid-rows-[repeat(6,1fr)] gap-[5px] p-[10px] box-border">
+          <div v-for="(row, index) in problem" :key="'p' + index" class="grid grid-cols-[repeat(5,1fr)] gap-[5px]">
+            <div
+              v-for="(key, index2) in row"
+              :key="'p' + index2"
+              class="w-[62px] h-[62px] bg-[#787c7e] uppercase inline-flex items-center justify-center text-white text-[2rem] font-bold leading-8 box-border"
+            >
+              {{ key }}
+            </div>
+          </div>
+        </div>
+      </section>
       <section class="flex flex-col mt-auto items-center">
         <div v-for="(row, index) in keybord" :key="index" class="flex mx-0 mt-auto mb-2">
           <div
