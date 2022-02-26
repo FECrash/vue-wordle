@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "vue": "^3.2.25",
-    "@types/path-browserify": "^1.0.0",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
