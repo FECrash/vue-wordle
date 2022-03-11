@@ -3,7 +3,7 @@ import { defineProps, toRefs } from 'vue';
 
 const props = defineProps<{
   keyboardRow: {
-    key: string;
+    letter: string;
     state: 'out' | 'ball' | 'strike' | 'none';
   }[];
 }>();
@@ -11,12 +11,12 @@ const { keyboardRow } = toRefs(props);
 </script>
 <template>
   <div
-    v-for="(row, index2) in keyboardRow"
+    v-for="({ letter, state }, index2) in keyboardRow"
     :key="index2"
-    class="font-bold text-sm uppercase mr-2 border-solid border-gray-500 h-14 border-2 rounded-md flex justify-center items-center"
-    :class="row.key.length > 1 ? 'w-[65px]' : 'w-[43px]'"
+    class="font-bold text-sm uppercase mr-2 border-solid border-gray-500 h-14 border-2 rounded-md flex justify-center items-center cursor-pointer"
+    :class="[letter.length > 1 ? 'w-[65px]' : 'w-[43px]']"
   >
-    <template v-if="row.key === 'icon'">
+    <template v-if="letter === 'icon'">
       <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
         <path
           fill="#000000"
@@ -25,7 +25,7 @@ const { keyboardRow } = toRefs(props);
       </svg>
     </template>
     <template v-else>
-      {{ row.key }}
+      {{ letter }}
     </template>
   </div>
 </template>
