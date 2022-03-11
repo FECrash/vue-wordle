@@ -4,7 +4,7 @@
 
 declare module 'wordle' {
   export type KeyEntity = {
-    key: string;
+    letter: string;
     state: 'out' | 'ball' | 'strike' | 'none';
   };
 
