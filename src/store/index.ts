@@ -1,6 +1,7 @@
 import { ActionContext, createStore } from 'vuex';
-import { gameboard } from '@/constants';
+import { keyboard, gameboard } from '@/constants';
 import { KeyEntity } from 'wordle';
+import words from '@/words';
 
 /**
  *
@@ -31,26 +32,79 @@ import { KeyEntity } from 'wordle';
 export interface StoreStateProps {
   targetKeyword: string;
   gameboard: KeyEntity[][];
+  keyboard: KeyEntity[][];
+  row: number;
+  col: number;
+  isSuccess: boolean;
 }
 
+export type PayloadProps = {
+  letter: string;
+};
+
+// [
+//   ['W', 'O', 'R', 'L', 'D'],
+//   ['O', 'L', 'D', 'E', 'R'],
+// ]
+// words({ exactly: 1, maxLength })
+const maxLength = 5;
 const store = createStore<StoreStateProps>({
   state: {
-    targetKeyword: '',
+    targetKeyword: 'WORLD',
     gameboard,
+    keyboard,
+    row: 0,
+    col: 0,
+    isSuccess: false,
   },
   actions: {
-    inputLetter(
-      { commit }: ActionContext<StoreStateProps, StoreStateProps>,
-      payload: { row: number; col: number; letter: string },
-    ) {
-      commit('input', payload);
+    inputLetter({ commit }: ActionContext<StoreStateProps, StoreStateProps>, { letter }: PayloadProps) {
+      commit(letter.length === 1 ? 'input' : letter.toLowerCase(), { letter });
     },
   },
   mutations: {
-    input(state: StoreStateProps, { row, col, letter }: { row: number; col: number; letter: string }) {
-      state.gameboard[row][col].letter = letter;
+    input(state: StoreStateProps, { letter }: PayloadProps) {
+      if (state.col >= maxLength) return;
+      if (state.row >= maxLength) return;
+      state.gameboard[state.row][state.col++].letter = letter;
+    },
+    backspace(state: StoreStateProps) {
+      if (state.col <= 0) return;
+      state.gameboard[state.row][--state.col].letter = '';
+    },
+    enter(state: StoreStateProps) {
+      // 값 비교, 로우 증가, state도 바꿔준다.
+      // 로우 체크, 콜 0
+      if (state.col !== maxLength) return alert('다섯 글자가 아니네요!');
+      if (state.row >= maxLength) return;
+      // changeLetterState(state);
+      const keyword = state.gameboard[state.row].map(({ letter }) => letter).join('');
+      if (keyword === state.targetKeyword) {
+        state.isSuccess = true;
+        return alert('정답!');
+      }
+      state.row++;
+      state.col = 0;
     },
   },
 });
+
+/**
+ *
+ * @param state
+ * @TODO: targetKeyword와 keyword 검증
+ * && 연산자 활용해서 체크
+ */
+const changeLetterState = (state: StoreStateProps) => {
+  const keyword = state.gameboard[state.row];
+  console.log(keyword);
+  // keyword.map((key, index) => {
+  //   if (state.targetKeyword.charAt(index) === key) return 'strike';
+  //   if (state.targetKeyword.charAt) return 'ball';
+  //   return 'out';
+  // });
+
+  // const flatedKeyboard = state.keyboard.flat();
+};
 
 export default store;

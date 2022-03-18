@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { defineProps, toRefs } from 'vue';
+import { StoreStateProps } from '@/store';
+import { defineProps, ref, toRefs } from 'vue';
+import { useStore } from 'vuex';
 
 const props = defineProps<{
   keyboardRow: {
@@ -8,15 +10,25 @@ const props = defineProps<{
   }[];
 }>();
 const { keyboardRow } = toRefs(props);
+const keyRef = ref<{ [key: number]: Element }>([]);
+const store = useStore<StoreStateProps>();
+const clickKey = (index: number, letter?: string) => {
+  keyRef.value[index].classList.toggle('animate-wiggle');
+  if (letter === undefined) return;
+  store.dispatch('inputLetter', { letter });
+};
 </script>
 <template>
   <div
     v-for="({ letter, state }, index2) in keyboardRow"
+    :ref="element => (keyRef[index2] = element as Element)"
     :key="index2"
     class="font-bold text-sm uppercase mr-2 border-solid border-gray-500 h-14 border-2 rounded-md flex justify-center items-center cursor-pointer"
     :class="[letter.length > 1 ? 'w-[65px]' : 'w-[43px]']"
+    @click="clickKey(index2, letter)"
+    @animationend="clickKey(index2)"
   >
-    <template v-if="letter === 'icon'">
+    <template v-if="letter === 'backspace'">
       <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
         <path
           fill="#000000"
