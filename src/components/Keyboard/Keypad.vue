@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { StoreStateProps } from '@/store';
-import { defineProps, ref, toRefs } from 'vue';
+import { ref, toRefs } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps<{
@@ -17,6 +17,13 @@ const clickKey = (index: number, letter?: string) => {
   if (letter === undefined) return;
   store.dispatch('inputLetter', { letter });
 };
+
+const stateBgColor = {
+  strike: 'bg-[#6aaa64] text-white',
+  ball: 'bg-[#c9b458] text-white',
+  out: 'bg-[#787c7e] text-white',
+  none: 'bg-[#ffffff]',
+};
 </script>
 <template>
   <div
@@ -24,7 +31,7 @@ const clickKey = (index: number, letter?: string) => {
     :ref="element => (keyRef[index2] = element as Element)"
     :key="index2"
     class="font-bold text-sm uppercase mr-2 border-solid border-gray-500 h-14 border-2 rounded-md flex justify-center items-center cursor-pointer"
-    :class="[letter.length > 1 ? 'w-[65px]' : 'w-[43px]']"
+    :class="[letter.length > 1 ? 'w-[65px]' : 'w-[43px]', stateBgColor[state]]"
     @click="clickKey(index2, letter)"
     @animationend="clickKey(index2)"
   >

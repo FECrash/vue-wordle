@@ -1,6 +1,7 @@
 import { ActionContext, createStore } from 'vuex';
 import { keyboard, gameboard } from '@/constants';
-import { KeyEntity } from 'wordle';
+import { StoreStateProps, PayloadProps, LetterStateProps, KeyEntity } from 'wordle';
+import { ValidFunction } from 'common';
 import words from '@/words';
 
 /**
@@ -29,28 +30,15 @@ import words from '@/words';
  * 4. 리셋은 생각하지 말자.
  */
 
-export interface StoreStateProps {
-  targetKeyword: string;
-  gameboard: KeyEntity[][];
-  keyboard: KeyEntity[][];
-  row: number;
-  col: number;
-  isSuccess: boolean;
-}
-
-export type PayloadProps = {
-  letter: string;
-};
-
 // [
 //   ['W', 'O', 'R', 'L', 'D'],
 //   ['O', 'L', 'D', 'E', 'R'],
 // ]
-// words({ exactly: 1, maxLength })
+
 const maxLength = 5;
 const store = createStore<StoreStateProps>({
   state: {
-    targetKeyword: 'WORLD',
+    targetKeyword: words({ exactly: 1, maxLength })[0],
     gameboard,
     keyboard,
     row: 0,
@@ -77,17 +65,28 @@ const store = createStore<StoreStateProps>({
       // 로우 체크, 콜 0
       if (state.col !== maxLength) return alert('다섯 글자가 아니네요!');
       if (state.row >= maxLength) return;
-      // changeLetterState(state);
+      changeLetterState(state);
       const keyword = state.gameboard[state.row].map(({ letter }) => letter).join('');
       if (keyword === state.targetKeyword) {
         state.isSuccess = true;
-        return alert('정답!');
+
+        setTimeout(() => {
+          alert('정답!');
+        }, 500);
+        return;
       }
       state.row++;
       state.col = 0;
     },
   },
 });
+
+// @issue: 크롬 브라우저에서 치환된 '%'가 두 개가 되면 하나가 사라진다.
+const correctLetterState = (keyword: string, letter: string, index: number): [string, LetterStateProps] => {
+  if (keyword.charAt(index) === letter) return [keyword.replace(letter, '='), 'strike'];
+  if (keyword.includes(letter)) return [keyword, 'ball'];
+  return [keyword, 'out'];
+};
 
 /**
  *
@@ -96,15 +95,49 @@ const store = createStore<StoreStateProps>({
  * && 연산자 활용해서 체크
  */
 const changeLetterState = (state: StoreStateProps) => {
-  const keyword = state.gameboard[state.row];
-  console.log(keyword);
-  // keyword.map((key, index) => {
-  //   if (state.targetKeyword.charAt(index) === key) return 'strike';
-  //   if (state.targetKeyword.charAt) return 'ball';
-  //   return 'out';
-  // });
+  const gameboard = state.gameboard[state.row];
+  const keyboard = state.keyboard.flat();
+  let targetKeyword = state.targetKeyword;
+  gameboard.forEach((key, index) => {
+    const keyboardLetter = keyboard.find(({ letter }) => letter === key.letter) as KeyEntity;
+    const [changedKeyword, inputState] = correctLetterState(targetKeyword, key.letter, index);
+    targetKeyword = changedKeyword;
+    // 게임보드에 반영하기
+    if (isCurrentHighPriority(inputState, key.state)) {
+      key.state = inputState;
+      // 키보드 반영하기
+      if (isCurrentHighPriority(key.state, keyboardLetter.state)) {
+        keyboardLetter.state = key.state;
+      }
+    }
+  });
+  gameboard
+    .filter(key => key.state === 'ball')
+    .forEach(key => {
+      if (!targetKeyword.includes(key.letter)) key.state = 'out';
+      else targetKeyword = targetKeyword.replace(key.letter, '=');
+    });
+  // P A P P P => B B S B B
+  // % % % L E.includes(item.letter)
+  // => x :  out
+  // o : % % % L E
+  // ==========================================
+  // A P L L L
+  // S S B S B.filter(state === 'ball')
+  // [L{letter,state} L]
+  // [L, L].forEach()
+  // % % P % E.includes(item.letter) => L = out;
+};
 
-  // const flatedKeyboard = state.keyboard.flat();
+const isCurrentHighPriority: ValidFunction<LetterStateProps> = (current, latest) => {
+  const priority: Record<LetterStateProps, number> = {
+    strike: 3,
+    ball: 2,
+    out: 1,
+    none: 0,
+  };
+
+  return priority[current] >= priority[latest];
 };
 
 export default store;
