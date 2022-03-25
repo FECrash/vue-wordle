@@ -1,11 +1,9 @@
-// wordle state, string
-// keyboard key, key state
-// gameboard (keyword, row, key, key state)[]
-
 declare module 'wordle' {
+  export type LetterStateProps = 'out' | 'ball' | 'strike' | 'none';
+
   export type KeyEntity = {
     letter: string;
-    state: 'out' | 'ball' | 'strike' | 'none';
+    state: LetterStateProps;
   };
 
   export type GameboardRowEntity = {
@@ -22,4 +20,21 @@ declare module 'wordle' {
     result: boolean;
     row: GameboardRowEntity[];
   }
+
+  export interface StoreStateProps {
+    targetKeyword: string;
+    gameboard: KeyEntity[][];
+    keyboard: KeyEntity[][];
+    row: number;
+    col: number;
+    isSuccess: boolean;
+  }
+
+  export type PayloadProps = {
+    letter: string;
+  };
+}
+
+declare module 'common' {
+  export type ValidFunction<T> = (left: T, right: T) => boolean;
 }

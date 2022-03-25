@@ -25,7 +25,7 @@ function words(options: any) {
     let wordUsed;
     while (!rightSize) {
       wordUsed = generateRandomWord();
-      if (wordUsed.length <= options.maxLength) {
+      if (wordUsed.length === options.maxLength) {
         rightSize = true;
       }
     }

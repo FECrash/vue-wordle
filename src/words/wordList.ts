@@ -1954,4 +1954,4 @@ const wordList = [
   'zulu',
 ];
 
-export default wordList;
+export default wordList.map(word => word.toUpperCase());
