@@ -30,8 +30,8 @@ const stateBgColor = {
     v-for="({ letter, state }, index2) in keyboardRow"
     :ref="element => (keyRef[index2] = element as Element)"
     :key="index2"
-    class="font-bold text-sm uppercase mr-2 border-solid border-gray-500 h-14 border-2 rounded-md flex justify-center items-center cursor-pointer"
-    :class="[letter.length > 1 ? 'w-[65px]' : 'w-[43px]', stateBgColor[state]]"
+    class="font-bold text-sm uppercase mr-2 border-solid border-gray-500 h-16 border-2 rounded-md flex justify-center items-center cursor-pointer"
+    :class="[letter.length > 1 ? 'w-[67px]' : 'w-[45px]', stateBgColor[state]]"
     @click="clickKey(index2, letter)"
     @animationend="clickKey(index2)"
   >
