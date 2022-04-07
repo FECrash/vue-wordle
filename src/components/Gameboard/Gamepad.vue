@@ -15,7 +15,7 @@ const stateBgColor = {
   <div
     v-for="({ letter, state }, index2) in input"
     :key="'p' + index2"
-    class="w-[62px] h-[62px] border-2 border-solid border-[#d3d6da] uppercase inline-flex items-center justify-center text-[2rem] font-bold leading-8 box-border transition-transform"
+    class="w-[62px] h-[62px] border-2 border-solid border-[#d3d6da] uppercase inline-flex items-center justify-center text-[2rem] font-bold leading-8 box-border transition-all"
     :class="stateBgColor[state]"
   >
     {{ letter }}

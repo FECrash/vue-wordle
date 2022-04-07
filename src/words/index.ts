@@ -1,17 +1,8 @@
 import wordList from './wordList';
 
-// type OptionProps = {
-//   min: number;
-//   max: number;
-//   exactly: number;
-//   join: string;
-//   wordsPerString: number;
-//   separator: string;
-//   maxLength: number;
-//   formatter: (data: any) => any;
-// };
+export const getWordList = () => wordList;
 
-function words(options: any) {
+export function words(options: any) {
   function word() {
     if (options && options.maxLength > 1) {
       return generateWordWithMaxLength();
@@ -51,11 +42,8 @@ function words(options: any) {
   }
 
   // options supported: exactly, min, max, join
-  if (options.exactly) {
-    options.min = options.exactly;
-    options.max = options.exactly;
-  }
-
+  options.min = 1;
+  options.max = 1;
   // not a number = one word par string
   if (typeof options.wordsPerString !== 'number') {
     options.wordsPerString = 1;

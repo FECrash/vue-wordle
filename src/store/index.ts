@@ -1,8 +1,8 @@
 import { ActionContext, createStore } from 'vuex';
-import { keyboard, gameboard } from '@/constants';
+import { keyboard, gameboard, WORD_MAX_LENGTH } from '@/constants';
 import { StoreStateProps, PayloadProps, LetterStateProps, KeyEntity } from 'wordle';
 import { ValidFunction } from 'common';
-import words from '@/words';
+import { words, getWordList } from '@/words';
 
 /**
  *
@@ -34,11 +34,11 @@ import words from '@/words';
 //   ['W', 'O', 'R', 'L', 'D'],
 //   ['O', 'L', 'D', 'E', 'R'],
 // ]
-
-const maxLength = 5;
+const targetKeyword = words({ maxLength: WORD_MAX_LENGTH })[0];
+console.log(targetKeyword);
 const store = createStore<StoreStateProps>({
   state: {
-    targetKeyword: words({ exactly: 1, maxLength })[0],
+    targetKeyword,
     gameboard,
     keyboard,
     row: 0,
@@ -52,8 +52,8 @@ const store = createStore<StoreStateProps>({
   },
   mutations: {
     input(state: StoreStateProps, { letter }: PayloadProps) {
-      if (state.col >= maxLength) return;
-      if (state.row >= maxLength) return;
+      if (state.col >= WORD_MAX_LENGTH) return;
+      if (state.row >= WORD_MAX_LENGTH) return;
       state.gameboard[state.row][state.col++].letter = letter;
     },
     backspace(state: StoreStateProps) {
@@ -61,17 +61,22 @@ const store = createStore<StoreStateProps>({
       state.gameboard[state.row][--state.col].letter = '';
     },
     enter(state: StoreStateProps) {
-      // 값 비교, 로우 증가, state도 바꿔준다.
-      // 로우 체크, 콜 0
-      if (state.col !== maxLength) return alert('다섯 글자가 아니네요!');
-      if (state.row >= maxLength) return;
-      changeLetterState(state);
+      if (state.col !== WORD_MAX_LENGTH) return alert('다섯 글자가 아니네요!');
+      if (state.row >= WORD_MAX_LENGTH) return;
       const keyword = state.gameboard[state.row].map(({ letter }) => letter).join('');
+      if (!getWordList().includes(keyword)) return alert('단어가 아니에요!');
+      changeLetterState(state);
       if (keyword === state.targetKeyword) {
         state.isSuccess = true;
 
         setTimeout(() => {
-          alert('정답!');
+          alert('🎉정답!🎉 축하해요!!🥰\n게임을 다시 시작합니다!');
+          state.targetKeyword = words({ maxLength: WORD_MAX_LENGTH })[0];
+          state.gameboard = gameboard;
+          state.keyboard = keyboard;
+          state.row = 0;
+          state.col = 0;
+          state.isSuccess = false;
         }, 500);
         return;
       }
