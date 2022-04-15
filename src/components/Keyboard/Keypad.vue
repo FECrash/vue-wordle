@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { StoreStateProps } from '@/store';
 import { ref, toRefs } from 'vue';
 import { useStore } from 'vuex';
 
@@ -11,7 +10,7 @@ const props = defineProps<{
 }>();
 const { keyboardRow } = toRefs(props);
 const keyRef = ref<{ [key: number]: Element }>([]);
-const store = useStore<StoreStateProps>();
+const store = useStore();
 const clickKey = (index: number, letter?: string) => {
   keyRef.value[index].classList.toggle('animate-wiggle');
   if (letter === undefined) return;

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import Keypad from './Keypad.vue';
 import { useStore } from 'vuex';
-import { StoreStateProps } from '@/store';
 import { ref } from 'vue';
 import { cloneDeep } from 'lodash';
 
-const store = useStore<StoreStateProps>();
+const store = useStore();
 const items = ref<{ letter: string; state: 'out' | 'ball' | 'strike' | 'none' }[][]>(store.state.keyboard);
 
 store.subscribe((_, state) => {
