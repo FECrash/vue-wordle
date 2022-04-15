@@ -35,7 +35,7 @@ import { words, getWordList } from '@/words';
 //   ['O', 'L', 'D', 'E', 'R'],
 // ]
 const targetKeyword = words({ maxLength: WORD_MAX_LENGTH })[0];
-console.log(targetKeyword);
+
 const store = createStore<StoreStateProps>({
   state: {
     targetKeyword,
