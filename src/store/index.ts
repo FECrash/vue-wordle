@@ -71,12 +71,13 @@ const store = createStore<StoreStateProps>({
 
         setTimeout(() => {
           alert('🎉정답!🎉 축하해요!!🥰\n게임을 다시 시작합니다!');
-          state.targetKeyword = words({ maxLength: WORD_MAX_LENGTH })[0];
-          state.gameboard = gameboard;
-          state.keyboard = keyboard;
-          state.row = 0;
-          state.col = 0;
-          state.isSuccess = false;
+          location.replace('/');
+          // state.targetKeyword = words({ maxLength: WORD_MAX_LENGTH })[0];
+          // state.gameboard = gameboard;
+          // state.keyboard = keyboard;
+          // state.row = 0;
+          // state.col = 0;
+          // state.isSuccess = false;
         }, 500);
         return;
       }
